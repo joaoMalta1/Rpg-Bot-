@@ -1,7 +1,7 @@
 import random
 import re
-from flask import Flask, request
-from twilio.twiml.messaging_response import MessagingResponse
+from flask import Flask, request, jsonify
+from services.waha import Waha
 
 app = Flask(__name__)
 
@@ -33,11 +33,15 @@ def calcular_rolagem(entrada, seed=None):
 
 @app.route("/bot", methods=["POST"])
 def bot():
-    msg = request.form.get("Body")
-    resposta = calcular_rolagem(msg)
-    twiml_resp = MessagingResponse()
-    twiml_resp.message(resposta)
-    return str(twiml_resp)
+    data = request.json 
+    print(data)
+    waha = Waha()
+    chat_id = data['payload']['from']
+    waha.send_menssage(chat_id=chat_id, message="hehe")
+    return jsonify({'status':'sucess'}), 200
+    # msg = request.form.get("Body")
+    # resposta = calcular_rolagem(msg)
+    # return 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host = '0.0.0.0', port = '5000', debug=True)
